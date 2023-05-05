@@ -9,6 +9,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import java.util.Timer
 import java.util.TimerTask
 
@@ -59,34 +61,36 @@ class NoticeViewModel(
         // 监听跌倒事件标识
         _isFall.observeForever {
             // 若出现跌倒事件标识置为 true, 则进行一次性警告
-            if (it && !notice) {
-                notice = true
-                try {
-                    // 闹铃警告
-                    if (!isPlay) {
-                        alert.play()
-                        isPlay = true
-                    }
-                    // 电子邮件警告
-                    emailAd?.run {
-                        if (!isSentE && this != "") {
-                            mail.sendMail(this, device, suspectedTimeList)
-                            isSentE = true
+            viewModelScope.launch {
+                if (it && !notice) {
+                    notice = true
+                    try {
+                        // 闹铃警告
+                        if (!isPlay) {
+                            alert.play()
+                            isPlay = true
                         }
-                    }
-                    // 短信警告
-                    smsAd?.run {
-                        if (!isSentS && this != "") {
-                            sms.sendSms(this, device, suspectedTimeList)
-                            isSentS = true
+                        // 电子邮件警告
+                        emailAd?.run {
+                            if (!isSentE && this != "") {
+                                mail.sendMail(this, device, suspectedTimeList)
+                                isSentE = true
+                            }
                         }
+                        // 短信警告
+                        smsAd?.run {
+                            if (!isSentS && this != "") {
+                                sms.sendSms(this, device, suspectedTimeList)
+                                isSentS = true
+                            }
+                        }
+                        // 警告全部完成后, 清空时间记录
+                        if (isSentE && isSentS) suspectedTimeList.clear()
+                    } catch (ex: Exception) {
+                        Log.e(TAG, "警报流程{ alert::$isPlay - email::$isSentE - sms::$isSentS }")
+                        Log.e(TAG, "发出警报异常: ${ex.localizedMessage}", ex)
+                        notice = false
                     }
-                    // 警告全部完成后, 清空时间记录
-                    if (isSentE && isSentS) suspectedTimeList.clear()
-                } catch (ex: Exception) {
-                    Log.e(TAG, "警报流程{ alert::$isPlay - email::$isSentE - sms::$isSentS }")
-                    Log.e(TAG, "发出警报异常: ${ex.localizedMessage}", ex)
-                    notice = false
                 }
             }
         }

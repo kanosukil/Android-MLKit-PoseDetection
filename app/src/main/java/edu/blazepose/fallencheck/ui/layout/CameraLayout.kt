@@ -91,14 +91,17 @@ fun CameraShow(activity: CameraActivity) {
     val analyzer = remember {
         PoseAnalyzer(
             realTimeOpt = realTimeOpt,
-            showInFrameLikelihood = showInFrameLikelihood,
-            visualizeZ = visualizeZ,
-            rescaleZForVisualization = rescaleZForVisualization,
-            isHideInfo = isHideInfo,
             lensFacing = lensFacing,
             fallCheck = fall,
         )
     }
+    analyzer.setShow(
+        showInFrameLikelihood = showInFrameLikelihood,
+        visualizeZ = visualizeZ,
+        rescaleZForVisualization = rescaleZForVisualization,
+        isHideInfo = isHideInfo,
+    )
+    analyzer.setRealTimeOpt(realTimeOpt)
     val poseView = remember { PoseView(activity).apply { analyzer.view = this } }
 
     // 布局

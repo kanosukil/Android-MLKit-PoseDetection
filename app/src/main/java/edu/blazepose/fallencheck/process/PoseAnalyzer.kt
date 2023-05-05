@@ -9,6 +9,7 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.pose.PoseDetection
+import com.google.mlkit.vision.pose.PoseDetector
 import com.google.mlkit.vision.pose.PoseDetectorOptionsBase
 import edu.blazepose.fallencheck.process.check.FallViewModel
 import edu.blazepose.fallencheck.view.GraphicInfo
@@ -22,10 +23,6 @@ import java.util.TimerTask
  */
 class PoseAnalyzer(
     realTimeOpt: PoseDetectorOptionsBase,
-    private val showInFrameLikelihood: Boolean = true,
-    private val visualizeZ: Boolean = true,
-    private val rescaleZForVisualization: Boolean = true,
-    private val isHideInfo: Boolean = false,
     private val lensFacing: Int = CameraSelector.LENS_FACING_BACK,
     private val fallCheck: FallViewModel
 ) : ImageAnalysis.Analyzer {
@@ -44,11 +41,32 @@ class PoseAnalyzer(
         )
     }
 
+    private var showInFrameLikelihood: Boolean = true
+    private var visualizeZ: Boolean = true
+    private var rescaleZForVisualization: Boolean = true
+    private var isHideInfo: Boolean = false
+
     // 姿态检测器
-    private val detector = PoseDetection.getClient(realTimeOpt)
+    private var detector: PoseDetector = PoseDetection.getClient(realTimeOpt)
 
     // 姿态分析结果展示界面
     var view: PoseView? = null
+
+    fun setRealTimeOpt(opt: PoseDetectorOptionsBase) {
+        detector = PoseDetection.getClient(opt)
+    }
+
+    fun setShow(
+        showInFrameLikelihood: Boolean = this.showInFrameLikelihood,
+        visualizeZ: Boolean = this.visualizeZ,
+        rescaleZForVisualization: Boolean = this.rescaleZForVisualization,
+        isHideInfo: Boolean = this.isHideInfo,
+    ) {
+        this.showInFrameLikelihood = showInFrameLikelihood
+        this.visualizeZ = visualizeZ
+        this.rescaleZForVisualization = rescaleZForVisualization
+        this.isHideInfo = isHideInfo
+    }
 
     /**
      * 分析主体
