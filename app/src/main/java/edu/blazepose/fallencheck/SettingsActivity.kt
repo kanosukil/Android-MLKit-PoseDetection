@@ -19,12 +19,16 @@ import androidx.preference.SwitchPreference
 import edu.blazepose.fallencheck.util.PreferenceUtils
 import edu.blazepose.fallencheck.util.shortToast
 
+/**
+ * Preference Setting Activity
+ */
 class SettingsActivity : AppCompatActivity() {
     @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.xml.setting)
+        setContentView(R.xml.setting) // 绑定占位符
 
+        // 配置 PreferenceFragmentCompat
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.settings_container, CameraXSettingFragment())
@@ -52,6 +56,9 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
+        /**
+         * SwitchPreference 配置
+         */
         private fun setUpSwitch() {
             // 隐藏检测信息 pref_key_info_hide
             switchListen(R.string.pref_key_info_hide)
@@ -65,6 +72,9 @@ class SettingsActivity : AppCompatActivity() {
             switchListen(R.string.pref_key_rescale_z)
         }
 
+        /**
+         * 统一配置 SwitchPreference 变化监听器
+         */
         private fun switchListen(@StringRes prefkey: Int) {
             findPreference<SwitchPreference>(getString(prefkey))?.let {
                 it.setOnPreferenceChangeListener { _, newValue ->
@@ -78,6 +88,9 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
+        /**
+         * 配置 EditTextPreference(Summary / 变化监听 / defaultValue / 输入类型)
+         */
         private fun setUpEditText() {
             findPreference<EditTextPreference>(getString(R.string.pref_key_email_address))?.let {
                 it.setOnBindEditTextListener { et ->
@@ -131,6 +144,9 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
+        /**
+         * 获得相机属性 ID
+         */
         private fun getCameraCharacteristics(lensFacing: Int): CameraCharacteristics? {
             val cManager =
                 requireContext().getSystemService(Context.CAMERA_SERVICE) as CameraManager
@@ -152,6 +168,9 @@ class SettingsActivity : AppCompatActivity() {
             return null
         }
 
+        /**
+         * 获得设备支持的分辨率并进行配置
+         */
         private fun setUpCameraXSize(
             @StringRes previewSizePrefKeyId: Int,
             lensFacing: Int
@@ -177,7 +196,13 @@ class SettingsActivity : AppCompatActivity() {
                 // 设置 Size 显示内容
                 it.entries = entries
                 it.entryValues = entries
-                it.summary = it.entry?.toString() ?: "Defaults"
+                val bestSize: String = "1080x1080"
+                it.summary = if (bestSize in entries) {
+                    it.setDefaultValue(bestSize)
+                    bestSize
+                } else {
+                    it.entry?.toString() ?: "Defaults"
+                }
                 // 设置 Size 选择处理
                 it.setOnPreferenceChangeListener { _, newValue ->
                     newValue.toString().run {
@@ -189,6 +214,9 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
+        /**
+         * 配置设备分辨率
+         */
         private fun setUpPreference() {
             findPreference<PreferenceCategory>(
                 getString(R.string.pref_category_key_camera)

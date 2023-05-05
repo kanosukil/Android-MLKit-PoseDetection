@@ -4,6 +4,11 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 
+/**
+ * 分析信息显示
+ *
+ * @see <a href="https://github.com/googlesamples/mlkit/blob/master/android/vision-quickstart/app/src/main/java/com/google/mlkit/vision/demo/InferenceInfoGraphic.java">参考 ML Kit QuickStart InferenceInfoGraphic.java</a>
+ */
 class GraphicInfo(
     private val view: PoseView,
     private val frameLatency: Long,

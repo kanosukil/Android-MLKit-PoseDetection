@@ -19,6 +19,9 @@ import edu.blazepose.fallencheck.ui.layout.ScreenContainer
 import edu.blazepose.fallencheck.util.PreferenceUtils
 import edu.blazepose.fallencheck.util.PreferenceViewModel
 
+/**
+ * 显示相机预览的 Activity
+ */
 class CameraActivity : ComponentActivity() {
     // 相机配置 ViewModel
     lateinit var noticeViewModel: NoticeViewModel
@@ -58,18 +61,27 @@ class CameraActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * 从 Setting Activity 返回时, 更新 PreferenceView Model 中的内容
+     */
     override fun onResume() {
         super.onResume()
         // 更新相机配置
         preferenceViewModel.update()
     }
 
+    /**
+     * Activity Destory 的同时将 AlertViewModel 的 MediaPlayer 释放
+     */
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onDestroy() {
         super.onDestroy()
         alertViewModel.destory()
     }
 
+    /**
+     * CameraX 绑定 Preview 以及 analysis preview
+     */
     @Synchronized
     fun cameraBind() {
         cameraProvider?.run {

@@ -10,6 +10,9 @@ import androidx.lifecycle.MutableLiveData
 import com.google.mlkit.vision.pose.PoseDetectorOptionsBase
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 
+/**
+ * SharedPreference 值管理
+ */
 class PreferenceViewModel(
     application: Application,
     lensFacing: Int = CameraSelector.LENS_FACING_BACK
@@ -18,15 +21,26 @@ class PreferenceViewModel(
         private const val TAG = "Preference ViewModel"
     }
 
+    // 数据锁
     private val lock = Any()
+
+    // 相机朝向
     private val _lensFacing: MutableLiveData<Int> = MutableLiveData<Int>(lensFacing)
     val facing: LiveData<Int> get() = _lensFacing
-    private val _rearSize: MutableLiveData<Size> = MutableLiveData<Size>(Size(1280, 720))
+
+    // 后置分辨率
+    private val _rearSize: MutableLiveData<Size> = MutableLiveData<Size>(Size(1080, 1080))
     val rearSize: LiveData<Size> get() = _rearSize
-    private val _frontSize: MutableLiveData<Size> = MutableLiveData<Size>(Size(1280, 720))
+
+    // 前置分辨率
+    private val _frontSize: MutableLiveData<Size> = MutableLiveData<Size>(Size(1080, 1080))
     val frontSize: LiveData<Size> get() = _frontSize
+
+    // 隐藏分析信息
     private val _isHideInfo: MutableLiveData<Boolean> = MutableLiveData<Boolean>(false)
     val isHideInfo: LiveData<Boolean> = _isHideInfo
+
+    // 姿态检测处理器配置
     private val _opts: MutableLiveData<PoseDetectorOptionsBase> =
         MutableLiveData<PoseDetectorOptionsBase>(
             PoseDetectorOptions.Builder()
@@ -35,10 +49,16 @@ class PreferenceViewModel(
                 .build()
         )
     val opt: LiveData<PoseDetectorOptionsBase> get() = _opts
+
+    // 帧相似
     private val _isInFrameLikelihood: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true)
     val isInFrameLikelihood: LiveData<Boolean> get() = _isInFrameLikelihood
+
+    // Z 值可视化
     private val _isVisualizeZ: MutableLiveData<Boolean> = MutableLiveData<Boolean>(true)
     val isVisualizeZ: LiveData<Boolean> get() = _isVisualizeZ
+
+    // 缩放 Z 值可视化
     private val _isRescaleZForVisualization: MutableLiveData<Boolean> =
         MutableLiveData<Boolean>(true)
     val isRescaleZForVisualization: LiveData<Boolean> get() = _isRescaleZForVisualization
@@ -46,11 +66,11 @@ class PreferenceViewModel(
     /**
      * 用户信息
      */
-    private val _deviceName: MutableLiveData<String>
+    private val _deviceName: MutableLiveData<String> // 设备名
     val deviceName: LiveData<String> get() = _deviceName
-    private val _emailAddress: MutableLiveData<String>
+    private val _emailAddress: MutableLiveData<String> // 电子邮件地址
     val emailAddress: LiveData<String> get() = _emailAddress
-    private val _smsAddress: MutableLiveData<String>
+    private val _smsAddress: MutableLiveData<String> // 电话号码
     val smsAddress: LiveData<String> get() = _smsAddress
 
     init {
@@ -127,6 +147,12 @@ class PreferenceViewModel(
 //            )
             _isRescaleZForVisualization.value =
                 PreferenceUtils.shouldRescaleZForVisualization(context)
+//            _deviceName.postValue(PreferenceUtils.getDeviceName(context))
+            _deviceName.value = PreferenceUtils.getSmsAddress(context)
+//            _emailAddress.postValue(PreferenceUtils.getEmailAddress(context))
+            _emailAddress.value = PreferenceUtils.getEmailAddress(context)
+//            _smsAddress.postValue(PreferenceUtils.getSmsAddress(context))
+            _smsAddress.value = PreferenceUtils.getSmsAddress(context)
         }
     }
 }

@@ -171,7 +171,8 @@ class FallenCheckActivity : ComponentActivity() {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WAKE_LOCK,
                 Manifest.permission.SEND_SMS,
-                Manifest.permission.INTERNET
+                Manifest.permission.INTERNET,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS
             )
     }
 }

@@ -18,33 +18,39 @@ import kotlin.math.absoluteValue
 import kotlin.math.atan2
 import kotlin.math.pow
 
+/**
+ * 跌倒检测 ViewModel
+ */
 class FallViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         private const val cacheSize: Int = 5 // 缓存大小
-        private const val posePointNumber: Int = 33
+        private const val posePointNumber: Int = 33 // BlazePose 模型骨架点数量
         private val fiveFrameCache: Array<Array<FloatArray>> =
             Array(cacheSize) { Array(posePointNumber) { FloatArray(2) } } // 姿态缓存区
-        private const val VelxThr: Float = 20f
-        private const val AngleCenterThr: Float = 45f
-        private const val RatioWHBoxThr: Float = 1f
+        private const val VelxThr: Float = 20f // 下坠速度阈值
+        private const val AngleCenterThr: Float = 45f // 人体纵向中心线倾斜角阈值
+        private const val RatioWHBoxThr: Float = 1f // 人体外接框阈值
+        private const val AlertIntervalMs: Long = 5000L // 警戒间隔 5s(放置多次警戒)
 
-        private const val AlertIntervalMs: Long = 5000L
         private const val TAG = "Fall check ViewModel"
     }
 
-    private var zeroFrameNumber: Int by mutableStateOf(0)
-    private var frameFlag: Int by mutableStateOf(0)
-    private var isframeCacheFull: Boolean by mutableStateOf(false)
-    private var alertFlag: Boolean by mutableStateOf(false)
-    private var alertTime: Long by mutableStateOf(0L)
+    private var zeroFrameNumber: Int by mutableStateOf(0) // 清空缓存区中, 之前的内容, 以免影响结果
+    private var frameFlag: Int by mutableStateOf(0) // 缓存区索引
+    private var isframeCacheFull: Boolean by mutableStateOf(false) // 缓存区空间是否已满
+    private var alertFlag: Boolean by mutableStateOf(false) // 警戒标识
+    private var alertTime: Long by mutableStateOf(0L) // 警戒发生时间
 
+    // 对外警戒标识
     private var _shouldAlert: MutableLiveData<Boolean> = MutableLiveData(alertFlag)
     val shouldAlert: LiveData<Boolean> get() = _shouldAlert
     fun closeAlert() {
         _shouldAlert.postValue(false)
     }
 
-    // 对外检测接口
+    /**
+     * 对外检测入口
+     */
     fun check(landmarks: List<PoseLandmark>, view: PoseView) {
         // 5s 内只进行一次警报
         if (alertFlag && SystemClock.elapsedRealtime() - alertTime >= AlertIntervalMs)
@@ -55,22 +61,24 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
             pose2D[i][0] = view.translateX(lm.position3D.x)
             pose2D[i][1] = view.translateY(lm.position3D.y)
         }
+
         if (pose2D[0][0] != 0f && pose2D[0][1] != 0f) {
+            // 检测到人体时
             zeroFrameNumber = 0
             fillCache(pose2D)
             frameFlag++
             checkFlag()
-            if (isframeCacheFull) check()
+            if (isframeCacheFull) check() // 缓存区满时, 每变一帧都进行检测
         } else {
+            // 未检测到人体时
             zeroFrameNumber++
             resetCache()
         }
     }
 
-    private fun alert() {
-        shortToast(getApplication<Application>().applicationContext, "跌倒了!")
-    }
-
+    /**
+     * 填充缓存区
+     */
     private fun fillCache(pose2D: Array<FloatArray>) {
         for ((index, pose) in pose2D.withIndex()) {
             fiveFrameCache[frameFlag][index][0] = pose[0]
@@ -78,13 +86,19 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    /**
+     * 检测到人体且缓存区已满时, 从缓存区开头再次填充, 并每变一帧都进行检测(提高检测精度)
+     */
     private fun checkFlag() {
-        if (frameFlag == cacheSize) {
+        if (!isframeCacheFull && frameFlag == cacheSize) {
             isframeCacheFull = true
             frameFlag = 0
         }
     }
 
+    /**
+     * 未检测到人体时, 连续超过5帧将清空缓存区
+     */
     private fun resetCache() {
         if (zeroFrameNumber == cacheSize) {
             frameFlag = 0
@@ -115,15 +129,20 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
              * sumX * x1 + sumX2 * x2 = sumY2
              *
              * x2 = (sumY2 * n - sumX * sumY) / (sumX2 * n - sumX * sumX) = v
+             *
+             * 解得 => y = x2 * x + x1 => x2 即为速度
              */
 
             return (sumY2 * n - sumX * sumY) / (sumX2 * n - sumX * sumX)
         } catch (ex: Exception) {
-            Log.w(TAG, "velocity() -> 计算跌倒速度异常: ${ex.localizedMessage}", ex)
+            Log.w(TAG, "velocity() -> 计算速度异常: ${ex.localizedMessage}", ex)
             return Float.NaN
         }
     }
 
+    /**
+     * 计算速度
+     */
     private fun velocity(arr: Array<Float>): Float =
         velocity(arr.toFloatArray())
 
@@ -131,6 +150,17 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
      * 求人体纵向中心线角度
      */
     private fun humanCenterOrientation(neck: Array<Float>, hip: Array<Float>): Float {
+        /**
+         * A
+         * |\
+         * | \
+         * |  \
+         * |___\
+         * B    C
+         *
+         * tan<BAC = BC / AB
+         * atan BC/AB = <BAC
+         */
         val dx = neck[0] - hip[0]
         val dy = neck[1] - hip[1]
         return atan2(dy, dx) * 180 / PI.toFloat()
@@ -144,6 +174,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
 
     /**
      * <del>求人体中心点坐标: 用于求下坠速度(已弃用, 精度劣于头部)</del>
+     *
      * 求两点中点坐标
      */
     private fun humanCenter(neck: Array<Float>, hip: Array<Float>): Array<Float> {
@@ -152,6 +183,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
 
     /**
      * <del>求人体中心点坐标: 用于求下坠速度(已弃用, 精度劣于头部)</del>
+     *
      * 求两点中点坐标
      */
     private fun humanCenter(neck: FloatArray, hip: FloatArray): Array<Float> =
@@ -198,6 +230,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
         val xVel = velocity(Array(cacheSize) { fiveFrameCache[it][0][0] }).absoluteValue
         val yVel = velocity(Array(cacheSize) { fiveFrameCache[it][0][1] }).absoluteValue
 
+        // 对检测缓存区的每一帧都进行计算
         fiveFrameCache.forEach {
             // 中心线角度(以脖子和髋部确定中心线)
             val angle = humanCenterOrientation(
@@ -223,6 +256,13 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
                 }"
             )
 
+            /**
+             * (由于实际通过横屏检测, 相机旋转并未改变, 因此使用x作为纵向移动轴,
+             * 角度: 从头向下指为 x 正向, 因此 人物站立时 角度基本为 180 度, 因此采用 0 ~ 180 - thr 的表示法)
+             * <p></p>特性1: 头部下坠速度 大于 阈值
+             * <p></p>特性2: 人体纵向中心角 大于 阈值
+             * <p></p>特性3: 人体外接框宽高比 大于 阈值
+             */
             if (xVel >= VelxThr &&
                 angle in 0f..(180 - AngleCenterThr) &&
                 ratio <= RatioWHBoxThr
@@ -232,7 +272,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
                     alertFlag = true
                     _shouldAlert.postValue(alertFlag)
                     alertTime = SystemClock.elapsedRealtime()
-                    alert()
+                    shortToast(getApplication<Application>().applicationContext, "跌倒了!")
                 }
             }
         }

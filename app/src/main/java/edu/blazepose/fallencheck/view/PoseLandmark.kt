@@ -7,6 +7,11 @@ import com.google.mlkit.vision.pose.Pose
 import java.util.Locale
 import com.google.mlkit.vision.pose.PoseLandmark as PLM
 
+/**
+ * 分析骨架绘制
+ *
+ * @see <a href="https://github.com/googlesamples/mlkit/blob/master/android/vision-quickstart/app/src/main/java/com/google/mlkit/vision/demo/kotlin/posedetector/PoseGraphic.kt">参考 ML Kit QuickStart PoseGraphic.kt</a>
+ */
 class PoseLandmark(
     view: PoseView,
     private val pose: Pose,

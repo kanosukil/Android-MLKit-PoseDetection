@@ -28,6 +28,7 @@ class SmsViewModel(context: Context) : ViewModel() {
         // getSystemService(SmsManager::class.java) 需要 API Level >= 31
         smsManager = context.getSystemService(SmsManager::class.java) ?: SmsManager.getDefault()
         val sent = "SEND_SMS_ACTION"
+        // flags = 0 不影响运行
         sentPedingIntent = PendingIntent.getBroadcast(context, 0, Intent(sent), 0)
         context.registerReceiver(object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -52,6 +53,7 @@ class SmsViewModel(context: Context) : ViewModel() {
         }, IntentFilter(sent))
 
         val delivered = "DELIVERED_SMS_ACTION"
+        // flags = 0 不影响运行
         deliverIntent = PendingIntent.getBroadcast(context, 0, Intent(delivered), 0)
         context.registerReceiver(object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -62,17 +64,12 @@ class SmsViewModel(context: Context) : ViewModel() {
 
     /**
      * 双卡存在时, 默认采用 SIM1 卡发送
+     * 当 Message 长度超过 70 个汉字(貌似)时, 需要拆分成多条短信发送
+     *
+     * sendTextMessage() 的 sentIntent(监听发送状态) & deliveryIntent(监听接收状态) 在没有监听需求下可为 null
      */
     fun sendSms(toAddress: String, device: String, times: List<String>) {
-        /*
-        //拆分短信内容（手机短信长度限制）,貌似长度限制为140个字符,就是
-        //只能发送70个汉字,多了要拆分成多条短信发送
-        //第四五个参数,如果没有需要监听发送状态与接收状态的话可以写null
-        val divideContents: List<String> = smsManager.divideMessage(message)
-        for (text in divideContents) {
-            smsManager.sendTextMessage(phoneNumber, null, text, sentPI, deliverPI)
-        }
-        */
+
         val message = "设备[$device]于\n${listToString(times)}\n检测到疑似跌倒事件(仅最后为确定事件)."
         if (message.length > 70) {
             val divideContents: List<String> =

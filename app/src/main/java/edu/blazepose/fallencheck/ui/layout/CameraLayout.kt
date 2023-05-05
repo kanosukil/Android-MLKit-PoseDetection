@@ -41,9 +41,15 @@ import java.util.Date
 import java.util.Locale
 import androidx.compose.ui.tooling.preview.Preview as Pr
 
+/**
+ * 相机预览整体界面
+ *
+ * @see <a href="https://github.com/sameermore412/CameraApp/blob/main/app/src/main/java/com/more/camerapp/screens/CameraScreen.kt">参考 sameermore412 CameraApp CameraScreen.kt</a>
+ */
 @RequiresApi(Build.VERSION_CODES.M)
 @Composable
 fun CameraShow(activity: CameraActivity) {
+    // 变量获取以及初始化
     val preference = activity.preferenceViewModel
     val lensFacing = preference.facing.observeAsState().value!!
     val realTimeOpt = preference.opt.observeAsState().value!!
@@ -95,9 +101,11 @@ fun CameraShow(activity: CameraActivity) {
     }
     val poseView = remember { PoseView(activity).apply { analyzer.view = this } }
 
+    // 布局
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (camera, button) = createRefs()
 
+        // 相机预览
         CameraScreen(
             modifier = Modifier.constrainAs(camera) {
                 width = Dimension.fillToConstraints
@@ -112,6 +120,7 @@ fun CameraShow(activity: CameraActivity) {
             poseView = poseView
         )
 
+        // 下方按钮框
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.constrainAs(button) {
@@ -168,6 +177,7 @@ fun CameraShow(activity: CameraActivity) {
                         val msg: String =
                             if (isFall) {
                                 notice.lift()
+                                fall.closeAlert()
                                 "警戒状态已停止"
                             } else {
                                 "警戒状态未启动"
@@ -204,6 +214,9 @@ fun CameraShow(activity: CameraActivity) {
     }
 }
 
+/**
+ * 相机预览布局
+ */
 @Composable
 fun CameraScreen(
     modifier: Modifier,
@@ -227,6 +240,7 @@ fun CameraScreen(
     // 预览显示
     Box(modifier = modifier.background(Color.DarkGray)) {
         AndroidView(modifier = Modifier.fillMaxSize(), factory = { customView }) { pre ->
+            // 绑定 CameraX
             cameraProviderFuture.addListener({
                 activity.cameraProvider = cameraProviderFuture.get()
                 activity.preview = Preview.Builder()

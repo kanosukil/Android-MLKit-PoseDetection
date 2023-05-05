@@ -11,25 +11,33 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.AndroidViewModel
 import edu.blazepose.fallencheck.util.shortToast
 
+/**
+ * 警报
+ *
+ * 使用 MediaPlayer 播放 Ringtone 模拟
+ */
 @RequiresApi(Build.VERSION_CODES.M)
 class AlertViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         private const val TAG = "Alert ViewModel"
     }
 
-    private val defaultUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+    private val defaultUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM) // 铃声
     private val audioManager: AudioManager
     private var mediaPlayer: MediaPlayer? = null
-    private val maxVolume: Int
+    private val maxVolume: Int // 最大音量
 
     init {
         audioManager = application.applicationContext
             .getSystemService(Context.AUDIO_SERVICE) as AudioManager
         maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING)
-//        setVolume() // 音量设置
+        setVolume() // 音量设置
         playerReset() // 播放器初始化
     }
 
+    /**
+     * 设置音量
+     */
     private fun setVolume(volume: Int = maxVolume) {
         if (volume in 0..maxVolume) {
             try {
@@ -42,6 +50,9 @@ class AlertViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    /**
+     * 重设播放器
+     */
     private fun playerReset() {
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer.create(
@@ -69,17 +80,27 @@ class AlertViewModel(application: Application) : AndroidViewModel(application) {
             }
             isLooping = true
         }
+        setVolume()
     }
 
+    /**
+     * 播放
+     */
     fun play() {
         mediaPlayer?.let { if (!it.isPlaying) it.start() }
     }
 
+    /**
+     * 停止警报
+     */
     fun stop() {
         mediaPlayer?.stop()
         playerReset()
     }
 
+    /**
+     * Activity Destory 时, 释放资源
+     */
     fun destory() {
         stop()
         mediaPlayer?.release()

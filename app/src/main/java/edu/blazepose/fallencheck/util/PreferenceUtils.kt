@@ -13,6 +13,11 @@ import com.google.mlkit.vision.pose.accurate.AccuratePoseDetectorOptions
 import com.google.mlkit.vision.pose.defaults.PoseDetectorOptions
 import edu.blazepose.fallencheck.R
 
+/**
+ * SharedPreference 工具
+ *
+ * @see <a href="https://github.com/googlesamples/mlkit/blob/master/android/vision-quickstart/app/src/main/java/com/google/mlkit/vision/demo/preference/PreferenceUtils.java">参考 ML kit QuickStart PreferenceUtils.java</a>
+ */
 object PreferenceUtils {
     private const val POSE_DETECTOR_PERFORMANCE_MODE_FAST = 1
     private const val TAG = "PreferenceUtils"

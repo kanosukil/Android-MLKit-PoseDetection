@@ -9,6 +9,11 @@ import android.view.View
 import com.google.common.base.Preconditions
 import com.google.common.primitives.Ints
 
+/**
+ * 分析姿态显示界面
+ *
+ * @see <a href="https://github.com/googlesamples/mlkit/blob/master/android/vision-quickstart/app/src/main/java/com/google/mlkit/vision/demo/GraphicOverlay.java">参考 ML Kit QuickStart GraphicOverlay.java</a>
+ */
 class PoseView(
     context: Context,
     attrs: AttributeSet? = null

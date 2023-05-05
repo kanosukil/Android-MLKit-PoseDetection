@@ -13,13 +13,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import edu.blazepose.fallencheck.ui.theme.FallenCheckTheme
 
-
+/**
+ * 进入主页面
+ *
+ * @see <a href="https://github.com/sameermore412/CameraApp/blob/main/app/src/main/java/com/more/camerapp/screens/HomeScreen.kt">参考 sameermore412 CameraApp HomeScreen.kt</a>
+ */
 @Composable
 fun HomeShow(
     onCameraClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    test1: () -> Unit = {},
-    test2: () -> Unit = {},
+//    test1: () -> Unit = {},
+//    test2: () -> Unit = {},
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
