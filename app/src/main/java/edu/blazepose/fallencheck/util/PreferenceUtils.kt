@@ -145,7 +145,7 @@ object PreferenceUtils {
         return try {
             Size.parseSize(getSharedPreferences(context).getString(prefKey, null))
         } catch (e: Exception) {
-            Log.w(TAG, "获取分辨率列表异常: ${e.message}")
+            Log.w(TAG, "获取分辨率列表异常: ${e.localizedMessage}", e)
             null
         }
     }
@@ -153,11 +153,11 @@ object PreferenceUtils {
     /**
      * 设备名称
      */
-    fun getDeviceName(context: Context): String? = getSharedPreferences(context)
+    fun getDeviceName(context: Context): String = getSharedPreferences(context)
         .getString(
             context.getString(R.string.pref_key_device_name),
             "Device-${Build.BRAND}-${Build.ID}"
-        )
+        ) ?: "Device-${Build.BRAND}-${Build.ID}"
 
     /**
      * 电子邮件地址

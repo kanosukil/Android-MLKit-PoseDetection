@@ -69,14 +69,14 @@ class NoticeViewModel(
                     }
                     // 电子邮件警告
                     emailAd?.run {
-                        if (!isSentE) {
+                        if (!isSentE && this != "") {
                             mail.sendMail(this, device, suspectedTimeList)
                             isSentE = true
                         }
                     }
                     // 短信警告
                     smsAd?.run {
-                        if (!isSentS) {
+                        if (!isSentS && this != "") {
                             sms.sendSms(this, device, suspectedTimeList)
                             isSentS = true
                         }

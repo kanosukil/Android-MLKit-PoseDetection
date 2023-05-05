@@ -8,6 +8,7 @@ import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraManager
 import android.os.Bundle
 import android.text.InputType
+import android.util.Size
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
@@ -107,7 +108,7 @@ class SettingsActivity : AppCompatActivity() {
                     }
                     true
                 }
-                it.summary = PreferenceUtils.getEmailAddress(requireContext()) ?: "未设置"
+                it.summary = PreferenceUtils.getEmailAddress(requireContext())?.ifBlank { "未设置" } ?: "未设置"
                 it.setDefaultValue(it.summary)
             }
             findPreference<EditTextPreference>(getString(R.string.pref_key_sms_address))?.let {
@@ -123,7 +124,7 @@ class SettingsActivity : AppCompatActivity() {
                     }
                     true
                 }
-                it.summary = PreferenceUtils.getSmsAddress(requireContext()) ?: "未设置"
+                it.summary = PreferenceUtils.getSmsAddress(requireContext())?.ifBlank { "未设置" } ?: "未设置"
                 it.setDefaultValue(it.summary)
             }
             findPreference<EditTextPreference>(getString(R.string.pref_key_device_name))?.let {
@@ -196,13 +197,12 @@ class SettingsActivity : AppCompatActivity() {
                 // 设置 Size 显示内容
                 it.entries = entries
                 it.entryValues = entries
-                val bestSize: String = "1080x1080"
-                it.summary = if (bestSize in entries) {
-                    it.setDefaultValue(bestSize)
-                    bestSize
-                } else {
-                    it.entry?.toString() ?: "Defaults"
+                Size(1080, 1080).toString().let { sz ->
+                    if (sz in entries) {
+                        it.value = sz
+                    }
                 }
+                it.summary = it.entry?.toString() ?: "Defaults"
                 // 设置 Size 选择处理
                 it.setOnPreferenceChangeListener { _, newValue ->
                     newValue.toString().run {

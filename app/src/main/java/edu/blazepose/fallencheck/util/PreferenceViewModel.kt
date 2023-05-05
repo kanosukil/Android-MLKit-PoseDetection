@@ -148,7 +148,7 @@ class PreferenceViewModel(
             _isRescaleZForVisualization.value =
                 PreferenceUtils.shouldRescaleZForVisualization(context)
 //            _deviceName.postValue(PreferenceUtils.getDeviceName(context))
-            _deviceName.value = PreferenceUtils.getSmsAddress(context)
+            _deviceName.value = PreferenceUtils.getDeviceName(context)
 //            _emailAddress.postValue(PreferenceUtils.getEmailAddress(context))
             _emailAddress.value = PreferenceUtils.getEmailAddress(context)
 //            _smsAddress.postValue(PreferenceUtils.getSmsAddress(context))

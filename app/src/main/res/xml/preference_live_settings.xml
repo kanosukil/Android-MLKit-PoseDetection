@@ -21,7 +21,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:enabled="false"
+        android:enabled="true"
         android:key="@string/pref_category_key_camera"
         android:summary="@string/pref_summary_camera_tips"
         android:title="@string/pref_category_title_camera"

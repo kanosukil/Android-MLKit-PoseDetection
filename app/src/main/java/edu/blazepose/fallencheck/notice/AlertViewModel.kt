@@ -37,6 +37,7 @@ class AlertViewModel(application: Application) : AndroidViewModel(application) {
 
     /**
      * 设置音量
+     * <p></p> Android 设备开启免打扰时, 将报 SecurityException: Not allowed to change Do Not Disturb state
      */
     private fun setVolume(volume: Int = maxVolume) {
         if (volume in 0..maxVolume) {

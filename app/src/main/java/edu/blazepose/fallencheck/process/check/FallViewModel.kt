@@ -90,7 +90,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
      * 检测到人体且缓存区已满时, 从缓存区开头再次填充, 并每变一帧都进行检测(提高检测精度)
      */
     private fun checkFlag() {
-        if (!isframeCacheFull && frameFlag == cacheSize) {
+        if (frameFlag == cacheSize) {
             isframeCacheFull = true
             frameFlag = 0
         }
