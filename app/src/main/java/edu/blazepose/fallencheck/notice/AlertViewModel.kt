@@ -31,7 +31,6 @@ class AlertViewModel(application: Application) : AndroidViewModel(application) {
         audioManager = application.applicationContext
             .getSystemService(Context.AUDIO_SERVICE) as AudioManager
         maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING)
-        setVolume() // 音量设置
         playerReset() // 播放器初始化
     }
 
@@ -81,7 +80,6 @@ class AlertViewModel(application: Application) : AndroidViewModel(application) {
             }
             isLooping = true
         }
-        setVolume()
     }
 
     /**
@@ -100,9 +98,9 @@ class AlertViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * Activity Destory 时, 释放资源
+     * Activity Destroy 时, 释放资源
      */
-    fun destory() {
+    fun destroy() {
         stop()
         mediaPlayer?.release()
         mediaPlayer = null

@@ -49,7 +49,7 @@ class CameraActivity : ComponentActivity() {
             alert = alertViewModel,
             mail = mailViewModel,
             sms = smsViewModel,
-            deviceName = PreferenceUtils.getDeviceName(applicationContext)!!,
+            deviceName = PreferenceUtils.getDeviceName(applicationContext),
             emailAddress = PreferenceUtils.getEmailAddress(applicationContext),
             smsAddress = PreferenceUtils.getSmsAddress(applicationContext)
         )
@@ -76,7 +76,7 @@ class CameraActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onDestroy() {
         super.onDestroy()
-        alertViewModel.destory()
+        alertViewModel.destroy()
     }
 
     /**
