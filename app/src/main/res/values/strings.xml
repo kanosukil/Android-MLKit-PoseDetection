@@ -1,0 +1,63 @@
+<resources>
+    <string name="app_name">CheckFallen</string>
+
+    <string name="pref_screen_setting_default" translatable="false">default</string>
+    <!-- Settings related strings. 设置相关字符串。-->
+    <string name="pref_screen" translatable="false">ps</string>
+    <string name="pref_screen_title_camerax_source" translatable="false">CameraX API 源设置</string>
+    <string name="pref_category_info" translatable="false">检测信息</string>
+    <string name="pref_category_pose_detection" translatable="false">姿态检测</string>
+
+    <!-- Strings for camera settings. 相机设置的字符串。-->
+    <string name="pref_category_key_camera" translatable="false">pckc</string>
+    <string name="pref_category_title_camera" translatable="false">相机</string>
+    <string name="pref_key_camerax_rear_target_resolution" translatable="false">crctas</string>
+    <string name="pref_key_camerax_front_target_resolution" translatable="false">cfctas</string>
+    <string name="pref_key_camera_live_viewport" translatable="false">clv</string>
+    <string name="pref_title_camerax_rear_camera_target_resolution" translatable="false">CameraX后置分辨率</string>
+    <string name="pref_title_camerax_front_camera_target_resolution" translatable="false">CameraX前置分辨率</string>
+    <string name="pref_title_camera_live_viewport" translatable="false">启用实时视口</string>
+    <string name="pref_summary_camera_live_viewport" translatable="false">不要在检测时阻止相机预览绘制</string>
+    <string name="pref_summary_camera_tips" translatable="false">相机会根据选择的分辨率选择合适的分辨率显示</string>
+
+    <!-- Strings for info preference. 信息首选项的字符串。-->
+    <string name="pref_title_info_hide" translatable="false">隐藏检测信息</string>
+    <string name="pref_key_info_hide" translatable="false">ih</string>
+
+    <!-- Strings for pose detector performance mode preference. 姿势检测器性能模式首选项。-->
+    <string name="pref_title_pose_detector_performance_mode" translatable="false">性能模式</string>
+    <string name="pref_key_performance_mode" translatable="false">lppdpm</string>
+    <string name="pref_key_still_image_pose_detection_performance_mode" translatable="false">sipdpm</string>
+    <string name="pref_entries_pose_detector_performance_mode_fast" translatable="false">快速检测</string>
+    <string name="pref_entries_pose_detector_performance_mode_accurate" translatable="false">精准检测</string>
+    <string name="pref_entry_values_pose_detector_performance_mode_fast" translatable="false">1</string>
+    <string name="pref_entry_values_pose_detector_performance_mode_accurate" translatable="false">2</string>
+
+    <!-- Strings for pose detector prefer gpu preference. 姿势检测器的 GPU 选项。-->
+    <string name="pref_title_pose_detector_prefer_gpu" translatable="false">开启 GPU 加速</string>
+    <string name="pref_key_prefer_gpu" translatable="false">pdpg</string>
+    <string name="pref_summary_pose_detector_prefer_gpu" translatable="false">检测器将不会对比 GPU 与 CPU 的检测速度。</string>
+
+    <!-- Strings for pose detector showInFrameLikelihood preference. 用于姿势检测的 showInFrameLikelihood 选项。-->
+    <string name="pref_title_pose_detector_show_in_frame_likelihood" translatable="false">显示 in-frame likelihood 值</string>
+    <string name="pref_key_show_in_frame_likelihood" translatable="false">lppdsifl</string>
+    <string name="pref_key_still_image_pose_detector_show_in_frame_likelihood" translatable="false">sipdsifl</string>
+
+    <!-- Strings for pose detector z value visualization preference. 用于姿态检测的 z 值可视化选项。-->
+    <string name="pref_title_pose_detector_visualize_z" translatable="false">开启 z 值可视化</string>
+    <string name="pref_key_visualize_z" translatable="false">pdvz</string>
+    <string name="pref_title_pose_detector_rescale_z" translatable="false">缩放 z 值以进行可视化</string>
+    <string name="pref_key_rescale_z" translatable="false">pdrz</string>
+
+    <string name="pref_category_info_summary" translatable="false">不一定生效</string>
+    <string name="pref_category_pose_detection_summary" translatable="false">不一定生效</string>
+
+    <string name="pref_category_user_info" translatable="false">用户信息</string>
+    <string name="pref_key_user_info" translatable="false">ui</string>
+    <string name="pref_title_email_address" translatable="false">电子邮件地址</string>
+    <string name="pref_key_email_address" translatable="false">ema</string>
+    <string name="pref_title_sms_address" translatable="false">电话号码</string>
+    <string name="pref_key_sms_address" translatable="false">smsa</string>
+    <string name="pref_title_device_name" translatable="false">自定设备名</string>
+    <string name="pref_key_device_name" translatable="false">dn</string>
+</resources>

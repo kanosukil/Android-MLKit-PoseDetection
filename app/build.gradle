@@ -1,0 +1,106 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'edu.blazepose.fallencheck'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "edu.blazepose.fallencheck"
+        minSdk 21
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += '/META-INF/DEPENDENCIES'
+            excludes += '/META-INF/NOTICE'
+            excludes += '/META-INF/LICENSE'
+            excludes += '/META-INF/LICENSE.md'
+            excludes += '/META-INF/LICENSE.txt'
+            excludes += '/META-INF/NOTICE.md'
+            excludes += '/META-INF/NOTICE.txt'
+        }
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.7.0'
+    // compose
+    implementation "androidx.compose.ui:ui:1.4.2"
+    implementation "androidx.compose.ui:ui-tooling-preview:1.4.2"
+    implementation "androidx.compose.material:material:1.4.2"
+    implementation "androidx.compose.material3:material3:1.0.1"
+    implementation 'androidx.compose.runtime:runtime-livedata:1.4.2'
+    // lifecycle
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1"
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.1'
+
+    implementation 'androidx.activity:activity-compose:1.7.1'
+    // preference
+    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'androidx.preference:preference-ktx:1.2.0'
+
+    implementation 'androidx.multidex:multidex:2.0.1'
+    // constraintlayout
+    implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.1'
+    // test
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.4.2"
+    debugImplementation "androidx.compose.ui:ui-tooling:1.4.2"
+    // camerax
+    implementation "androidx.camera:camera-core:1.0.0-SNAPSHOT"
+    implementation "androidx.camera:camera-camera2:1.0.0-SNAPSHOT"
+    implementation "androidx.camera:camera-lifecycle:1.0.0-SNAPSHOT"
+    implementation "androidx.camera:camera-view:1.0.0-SNAPSHOT"
+    implementation "androidx.camera:camera-mlkit-vision:1.3.0-alpha04"
+    // mlkit pose-detection
+    implementation 'com.google.mlkit:camera:16.0.0-beta3'
+    implementation 'com.google.mlkit:pose-detection:18.0.0-beta3'
+    implementation 'com.google.mlkit:pose-detection-accurate:18.0.0-beta3'
+    // google utils
+    implementation "com.google.android.odml:image:1.0.0-beta1"
+    implementation 'com.google.guava:guava:31.1-android'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation "com.google.accompanist:accompanist-permissions:0.17.0"
+    // mail
+    implementation 'com.sun.mail:android-mail:1.6.7'
+    implementation 'com.sun.mail:android-activation:1.6.7'
+}
+configurations {
+    all*.exclude group: 'com.google.guava', module: 'listenablefuture'
+}
