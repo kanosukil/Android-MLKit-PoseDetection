@@ -55,6 +55,17 @@ class NoticeViewModel(
     private val suspectedTimeList: MutableList<String> = ArrayList()
     fun addTime(time: String) {
         suspectedTimeList.add(time)
+        // 在列表长度达到一定值时触发，通报疑似跌倒事件的发生
+        if (suspectedTimeList.size >= 20) {
+            viewModelScope.launch {
+                emailAd?.run {
+                    if (this != "") {
+                        mail.sendMailSc(this, device, suspectedTimeList)
+                        suspectedTimeList.clear()
+                    }
+                }
+            }
+        }
     }
 
     init {

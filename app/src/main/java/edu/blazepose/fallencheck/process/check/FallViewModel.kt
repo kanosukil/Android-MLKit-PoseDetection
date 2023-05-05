@@ -232,10 +232,13 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
 
         // 对检测缓存区的每一帧都进行计算
         fiveFrameCache.forEach {
-            // 中心线角度(以脖子和髋部确定中心线)
+            // 中心线角度(以[脖子]和[髋部与膝盖的中点]确定中心线)
             val angle = humanCenterOrientation(
                 neck = humanCenter(it[11], it[12]),
-                hip = humanCenter(it[23], it[24])
+                hip = humanCenter(
+                    humanCenter(it[23], it[24]),
+                    humanCenter(it[25], it[26])
+                )
             ).absoluteValue
             // 外接框宽高比
             val ratio = humanBoxWHRatio(
