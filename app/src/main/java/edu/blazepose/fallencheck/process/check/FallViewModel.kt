@@ -226,6 +226,17 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
 //        }
 //        val xVel = fallVelocity(Array(cacheSize) { center[it][0] }).absoluteValue
 //        val yVel = fallVelocity(Array(cacheSize) { center[it][1] }).absoluteValue
+        // 取头部均值作为头部中心点
+//        val headXAve = Array(cacheSize) { i ->
+//            val array = fiveFrameCache[i].sliceArray(0..10)
+//            average(Array(11) { j -> array[j][0] })
+//        }
+//        val headYAve = Array(cacheSize) { i ->
+//            val array = fiveFrameCache[i].sliceArray(0..10)
+//            average(Array(11) { j -> array[j][1] })
+//        }
+//        val xVel = velocity(headXAve).absoluteValue
+//        val yVel = velocity(headYAve).absoluteValue
         // 取鼻子作为头部中心点
         val xVel = velocity(Array(cacheSize) { fiveFrameCache[it][0][0] }).absoluteValue
         val yVel = velocity(Array(cacheSize) { fiveFrameCache[it][0][1] }).absoluteValue
@@ -266,7 +277,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
              * <p></p>特性2: 人体纵向中心角 大于 阈值
              * <p></p>特性3: 人体外接框宽高比 大于 阈值
              */
-            if (xVel >= VelxThr &&
+            if (xVel >= VelxThr && // 可以将速度判定移至 foreach 之外，减少计算次数，提高检测效率。
                 angle in 0f..(180 - AngleCenterThr) &&
                 ratio <= RatioWHBoxThr
             ) {

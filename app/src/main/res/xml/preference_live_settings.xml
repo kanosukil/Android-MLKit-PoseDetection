@@ -40,7 +40,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:summary="@string/pref_category_info_summary"
         android:title="@string/pref_category_info">
         <SwitchPreference
             android:defaultValue="false"
@@ -50,7 +49,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:summary="@string/pref_category_pose_detection_summary"
         android:title="@string/pref_category_pose_detection">
         <ListPreference
             android:defaultValue="@string/pref_entry_values_pose_detector_performance_mode_fast"

@@ -18,7 +18,7 @@
     <string name="pref_title_camerax_front_camera_target_resolution" translatable="false">CameraX前置分辨率</string>
     <string name="pref_title_camera_live_viewport" translatable="false">启用实时视口</string>
     <string name="pref_summary_camera_live_viewport" translatable="false">不要在检测时阻止相机预览绘制</string>
-    <string name="pref_summary_camera_tips" translatable="false">相机会根据选择的分辨率选择合适的分辨率显示</string>
+    <string name="pref_summary_camera_tips" translatable="false">相机会根据选择选择合适的分辨率显示</string>
 
     <!-- Strings for info preference. 信息首选项的字符串。-->
     <string name="pref_title_info_hide" translatable="false">隐藏检测信息</string>
