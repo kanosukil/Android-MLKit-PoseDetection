@@ -69,7 +69,6 @@ class SmsViewModel(context: Context) : ViewModel() {
      * sendTextMessage() 的 sentIntent(监听发送状态) & deliveryIntent(监听接收状态) 在没有监听需求下可为 null
      */
     fun sendSms(toAddress: String, device: String, times: List<String>) {
-
         val message = "设备[$device]于\n${listToString(times)}\n检测到疑似跌倒事件(仅最后为确定事件)."
         if (message.length > 70) {
             val divideContents: List<String> =
@@ -80,5 +79,13 @@ class SmsViewModel(context: Context) : ViewModel() {
         } else {
             smsManager.sendTextMessage(toAddress, null, message, sentPedingIntent, deliverIntent)
         }
+    }
+
+    /**
+     * 简短信息
+     */
+    fun sendSms(toAddress: String, device: String, time: String) {
+        val message = "设备[$device]于[$time]检测到跌倒事件."
+        smsManager.sendTextMessage(toAddress, null, message, sentPedingIntent, deliverIntent)
     }
 }

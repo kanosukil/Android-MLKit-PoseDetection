@@ -91,7 +91,7 @@ class NoticeViewModel(
                         // 短信警告
                         smsAd?.run {
                             if (!isSentS && this != "") {
-                                sms.sendSms(this, device, suspectedTimeList)
+                                sms.sendSms(this, device, suspectedTimeList.last())
                                 isSentS = true
                             }
                         }
