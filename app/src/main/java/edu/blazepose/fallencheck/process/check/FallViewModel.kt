@@ -27,9 +27,9 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
         private const val posePointNumber: Int = 33 // BlazePose 模型骨架点数量
         private val fiveFrameCache: Array<Array<FloatArray>> =
             Array(cacheSize) { Array(posePointNumber) { FloatArray(2) } } // 姿态缓存区
-        private const val VelxThr: Float = 20f // 下坠速度阈值
-        private const val AngleCenterThr: Float = 45f // 人体纵向中心线倾斜角阈值
-        private const val RatioWHBoxThr: Float = 1f // 人体外接框阈值
+        private const val VelxThr: Float = 32f // 下坠速度阈值
+        private const val AngleCenterThr: Float = 120f // 人体纵向中心线倾斜角阈值
+        private const val RatioWHBoxThr: Float = 0.98f // 人体外接框阈值
         private const val AlertIntervalMs: Long = 5000L // 警戒间隔 5s(放置多次警戒)
 
         private const val TAG = "Fall check ViewModel"
@@ -278,7 +278,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
              * <p></p>特性3: 人体外接框宽高比 大于 阈值
              */
             if (xVel >= VelxThr && // 可以将速度判定移至 foreach 之外，减少计算次数，提高检测效率。
-                angle in 0f..(180 - AngleCenterThr) &&
+                angle in 0f..AngleCenterThr &&
                 ratio <= RatioWHBoxThr
             ) {
                 Log.e(TAG, "?!?!?!?!?!?!: 跌倒了!")

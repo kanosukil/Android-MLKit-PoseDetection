@@ -35,6 +35,8 @@ class AlertViewModel(application: Application) : AndroidViewModel(application) {
         playerReset() // 播放器初始化
     }
 
+    private var volumeFlag: Boolean = false
+
     /**
      * 设置音量
      * <p></p> Android 设备开启免打扰时, 将报 SecurityException: Not allowed to change Do Not Disturb state
@@ -46,7 +48,10 @@ class AlertViewModel(application: Application) : AndroidViewModel(application) {
             } catch (se: SecurityException) {
                 val msg = "铃声音量设置异常: ${se.localizedMessage}"
                 Log.e(TAG, msg, se)
-                shortToast(getApplication(), msg)
+                if (!volumeFlag) {
+                    shortToast(getApplication(), msg)
+                    volumeFlag = true
+                }
             }
         }
     }

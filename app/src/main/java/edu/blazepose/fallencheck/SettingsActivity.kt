@@ -197,9 +197,15 @@ class SettingsActivity : AppCompatActivity() {
                 // 设置 Size 显示内容
                 it.entries = entries
                 it.entryValues = entries
-                Size(1080, 1080).toString().let { sz ->
-                    if (sz in entries) {
-                        it.value = sz
+                if (PreferenceUtils.getCameraXTargetResolution(
+                        context = requireContext(),
+                        lensFacing = lensFacing
+                    ) == null
+                ) {
+                    Size(1080, 1080).toString().let { sz ->
+                        if (sz in entries) {
+                            it.value = sz
+                        }
                     }
                 }
                 it.summary = it.entry?.toString() ?: "Defaults"

@@ -12,7 +12,6 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import edu.blazepose.fallencheck.notice.AlertViewModel
 import edu.blazepose.fallencheck.ui.layout.HomeShow
 import edu.blazepose.fallencheck.ui.layout.ScreenContainer
 
@@ -21,8 +20,6 @@ import edu.blazepose.fallencheck.ui.layout.ScreenContainer
  */
 class FallenCheckActivity : ComponentActivity() {
 
-    private lateinit var alertViewModel: AlertViewModel
-
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,8 +27,6 @@ class FallenCheckActivity : ComponentActivity() {
         if (!allRuntimePermissionsGranted()) {
             getRuntimePermissions()
         }
-
-        alertViewModel = AlertViewModel(application)
 
         setContent {
             ScreenContainer(window = this.window) {
