@@ -10,6 +10,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.mlkit.vision.pose.PoseLandmark
+import edu.blazepose.fallencheck.util.average
 import edu.blazepose.fallencheck.util.round
 import edu.blazepose.fallencheck.util.shortToast
 import edu.blazepose.fallencheck.view.PoseView
@@ -27,7 +28,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
         private const val posePointNumber: Int = 33 // BlazePose 模型骨架点数量
         private val fiveFrameCache: Array<Array<FloatArray>> =
             Array(cacheSize) { Array(posePointNumber) { FloatArray(2) } } // 姿态缓存区
-        private const val VelxThr: Float = 32f // 下坠速度阈值
+        private const val VelXThr: Float = 21f // 下坠速度阈值
         private const val AngleCenterThr: Float = 120f // 人体纵向中心线倾斜角阈值
         private const val RatioWHBoxThr: Float = 0.98f // 人体外接框阈值
         private const val AlertIntervalMs: Long = 5000L // 警戒间隔 5s(放置多次警戒)
@@ -37,7 +38,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
 
     private var zeroFrameNumber: Int by mutableStateOf(0) // 清空缓存区中, 之前的内容, 以免影响结果
     private var frameFlag: Int by mutableStateOf(0) // 缓存区索引
-    private var isframeCacheFull: Boolean by mutableStateOf(false) // 缓存区空间是否已满
+    private var isFrameCacheFull: Boolean by mutableStateOf(false) // 缓存区空间是否已满
     private var alertFlag: Boolean by mutableStateOf(false) // 警戒标识
     private var alertTime: Long by mutableStateOf(0L) // 警戒发生时间
 
@@ -65,10 +66,9 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
         if (pose2D[0][0] != 0f && pose2D[0][1] != 0f) {
             // 检测到人体时
             zeroFrameNumber = 0
-            fillCache(pose2D)
-            frameFlag++
-            checkFlag()
-            if (isframeCacheFull) check() // 缓存区满时, 每变一帧都进行检测
+            // 填充
+            fillCache(pose2D = pose2D)
+            if (isFrameCacheFull) check() // 缓存区满时, 每变一帧都进行检测
         } else {
             // 未检测到人体时
             zeroFrameNumber++
@@ -77,22 +77,33 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * 填充缓存区
+     * 填充缓存区（队列）
      */
     private fun fillCache(pose2D: Array<FloatArray>) {
+        if (frameFlag == fiveFrameCache.lastIndex && isFrameCacheFull) {
+            for ((i, _) in fiveFrameCache.withIndex()) {
+                if (i == frameFlag) break
+                change(i)
+            }
+        }
         for ((index, pose) in pose2D.withIndex()) {
             fiveFrameCache[frameFlag][index][0] = pose[0]
             fiveFrameCache[frameFlag][index][1] = pose[1]
         }
+        frameFlag++
+        if (frameFlag == cacheSize) {
+            isFrameCacheFull = true
+            frameFlag = cacheSize - 1
+        }
     }
 
     /**
-     * 检测到人体且缓存区已满时, 从缓存区开头再次填充, 并每变一帧都进行检测(提高检测精度)
+     * 数组迁移
      */
-    private fun checkFlag() {
-        if (frameFlag == cacheSize) {
-            isframeCacheFull = true
-            frameFlag = 0
+    private fun change(idx1: Int, idx2: Int = idx1 + 1) {
+        for ((i, _) in fiveFrameCache[idx1].withIndex()) {
+            fiveFrameCache[idx1][i][0] = fiveFrameCache[idx2][i][0]
+            fiveFrameCache[idx1][i][1] = fiveFrameCache[idx2][i][1]
         }
     }
 
@@ -102,7 +113,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
     private fun resetCache() {
         if (zeroFrameNumber == cacheSize) {
             frameFlag = 0
-            isframeCacheFull = false
+            isFrameCacheFull = false
         }
     }
 
@@ -169,7 +180,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * 求人体纵向中心线角度
      */
-    private fun humanCenterOrinetation(neck: FloatArray, hip: FloatArray): Float =
+    private fun humanCenterOrientation(neck: FloatArray, hip: FloatArray): Float =
         humanCenterOrientation(neck.toTypedArray(), hip.toTypedArray())
 
     /**
@@ -227,19 +238,19 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
 //        val xVel = fallVelocity(Array(cacheSize) { center[it][0] }).absoluteValue
 //        val yVel = fallVelocity(Array(cacheSize) { center[it][1] }).absoluteValue
         // 取头部均值作为头部中心点
-//        val headXAve = Array(cacheSize) { i ->
-//            val array = fiveFrameCache[i].sliceArray(0..10)
-//            average(Array(11) { j -> array[j][0] })
-//        }
-//        val headYAve = Array(cacheSize) { i ->
-//            val array = fiveFrameCache[i].sliceArray(0..10)
-//            average(Array(11) { j -> array[j][1] })
-//        }
-//        val xVel = velocity(headXAve).absoluteValue
-//        val yVel = velocity(headYAve).absoluteValue
+        val headXAve = Array(cacheSize) { i ->
+            val array = fiveFrameCache[i].sliceArray(0..10)
+            average(Array(11) { j -> array[j][0] })
+        }
+        val headYAve = Array(cacheSize) { i ->
+            val array = fiveFrameCache[i].sliceArray(0..10)
+            average(Array(11) { j -> array[j][1] })
+        }
+        val xVel = velocity(headXAve)
+        val yVel = velocity(headYAve)
         // 取鼻子作为头部中心点
-        val xVel = velocity(Array(cacheSize) { fiveFrameCache[it][0][0] }).absoluteValue
-        val yVel = velocity(Array(cacheSize) { fiveFrameCache[it][0][1] }).absoluteValue
+//        val xVel = velocity(Array(cacheSize) { fiveFrameCache[it][0][0] })
+//        val yVel = velocity(Array(cacheSize) { fiveFrameCache[it][0][1] })
 
         // 对检测缓存区的每一帧都进行计算
         fiveFrameCache.forEach {
@@ -277,7 +288,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
              * <p></p>特性2: 人体纵向中心角 大于 阈值
              * <p></p>特性3: 人体外接框宽高比 大于 阈值
              */
-            if (xVel >= VelxThr && // 可以将速度判定移至 foreach 之外，减少计算次数，提高检测效率。
+            if (xVel >= VelXThr && // 可以将速度判定移至 foreach 之外，减少计算次数，提高检测效率。
                 angle in 0f..AngleCenterThr &&
                 ratio <= RatioWHBoxThr
             ) {
