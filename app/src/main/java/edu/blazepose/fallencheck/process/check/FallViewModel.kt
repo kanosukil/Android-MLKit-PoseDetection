@@ -41,12 +41,25 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
     private var isFrameCacheFull: Boolean by mutableStateOf(false) // 缓存区空间是否已满
     private var alertFlag: Boolean by mutableStateOf(false) // 警戒标识
     private var alertTime: Long by mutableStateOf(0L) // 警戒发生时间
+    private var fallTime: Long by mutableStateOf(0L)
 
     // 对外警戒标识
     private var _shouldAlert: MutableLiveData<Boolean> = MutableLiveData(alertFlag)
     val shouldAlert: LiveData<Boolean> get() = _shouldAlert
     fun closeAlert() {
         _shouldAlert.postValue(false)
+    }
+
+    fun resetAlert() {
+        closeAlert()
+        fallTime = 0L
+    }
+
+    private fun suspectedFall(msg: String) {
+        alertFlag = true
+        _shouldAlert.postValue(alertFlag)
+        alertTime = SystemClock.elapsedRealtime()
+        shortToast(getApplication<Application>().applicationContext, msg)
     }
 
     /**
@@ -114,6 +127,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
         if (zeroFrameNumber == cacheSize) {
             frameFlag = 0
             isFrameCacheFull = false
+            fallTime = 0L
         }
     }
 
@@ -278,7 +292,7 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
                     String.format("%8.2f", round(angle))
                 }|Ratio=${
                     String.format("%8.2f", round(ratio))
-                }"
+                }|Time=$fallTime"
             )
 
             /**
@@ -288,17 +302,23 @@ class FallViewModel(application: Application) : AndroidViewModel(application) {
              * <p></p>特性2: 人体纵向中心角 大于 阈值
              * <p></p>特性3: 人体外接框宽高比 大于 阈值
              */
-            if (xVel >= VelXThr && // 可以将速度判定移至 foreach 之外，减少计算次数，提高检测效率。
+            if (
                 angle in 0f..AngleCenterThr &&
                 ratio <= RatioWHBoxThr
             ) {
-                Log.e(TAG, "?!?!?!?!?!?!: 跌倒了!")
-                if (!alertFlag) {
-                    alertFlag = true
-                    _shouldAlert.postValue(alertFlag)
-                    alertTime = SystemClock.elapsedRealtime()
-                    shortToast(getApplication<Application>().applicationContext, "跌倒了!")
+                if (fallTime != 0L && fallTime < 1100L) fallTime++
+                if (fallTime >= 1024L && !alertFlag) suspectedFall("长时间跌倒未恢复！")
+                if (xVel >= VelXThr) {
+                    // &&  可以将速度判定移至 foreach 之外，减少计算次数，提高检测效率。
+                    Log.e(TAG, "?!?!?!?!?!?!: 跌倒了!")
+                    if (!alertFlag) suspectedFall("跌倒了!")
+                    fallTime++
                 }
+            } else if (
+                angle !in 0f..AngleCenterThr ||
+                ratio > RatioWHBoxThr
+            ) {
+                fallTime = 0L
             }
         }
     }

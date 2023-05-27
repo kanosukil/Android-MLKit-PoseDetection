@@ -180,7 +180,7 @@ fun CameraShow(activity: CameraActivity) {
                         val msg: String =
                             if (isFall) {
                                 notice.lift()
-                                fall.closeAlert()
+                                fall.resetAlert()
                                 "警戒状态已停止"
                             } else {
                                 "警戒状态未启动"
