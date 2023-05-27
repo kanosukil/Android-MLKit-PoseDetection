@@ -12,6 +12,11 @@ object FileUtils {
     private const val TAG = "FileUtils"
     private const val FileName = "FCFall.log"
 
+    /**
+     * 存储日志到文件
+     * @param context 应用上下文
+     * @param log 日志文本
+     */
     fun saveLog(context: Context, log: String) {
         var fileOutput: FileOutputStream? = null
         try {
@@ -29,6 +34,9 @@ object FileUtils {
         Log.w(TAG, "saveLog->${File(context.filesDir, FileName).absolutePath}")
     }
 
+    /**
+     * 调用第三方文本读取器读取日志文件
+     */
     fun openLog(context: Context) {
         val file = File(context.filesDir, FileName)
         if (!file.exists()) {

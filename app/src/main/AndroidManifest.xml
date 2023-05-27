@@ -53,6 +53,7 @@
             android:exported="false"
             android:theme="@style/Theme.AppCompat" />
 
+        <!--日志：文本读取-->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="edu.blazepose.fallencheck.textprovider"

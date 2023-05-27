@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
+    <!-- sdcard 下的路径-->
     <external-path
         name="external"
         path="." />
+    <!-- android/data 或 data/data 下的路径-->
     <files-path
         name="package"
         path="." />
