@@ -71,11 +71,12 @@ class CameraActivity : ComponentActivity() {
     }
 
     /**
-     * Activity Destory 的同时将 AlertViewModel 的 MediaPlayer 释放
+     * Activity Destory 的同时将 AlertViewModel 的 MediaPlayer 释放, 并将 NoticeViewModel 的疑似跌倒时间列表全部持久化
      */
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onDestroy() {
         super.onDestroy()
+        noticeViewModel.cleanSuspectedTime(false)
         alertViewModel.destroy()
     }
 

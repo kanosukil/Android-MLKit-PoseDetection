@@ -69,7 +69,7 @@ class NoticeViewModel(
         }
     }
 
-    private fun cleanSuspectedTime(isFall: Boolean = true) {
+    fun cleanSuspectedTime(isFall: Boolean = true) {
         var log = ""
         suspectedTimeList.withIndex().forEach { (i, v) ->
             log += if (isFall && i == suspectedTimeList.lastIndex) {
