@@ -22,6 +22,7 @@ import edu.blazepose.fallencheck.ui.theme.FallenCheckTheme
 fun HomeShow(
     onCameraClick: () -> Unit,
     onSettingsClick: () -> Unit,
+    onLogsClick: () -> Unit,
 //    test1: () -> Unit = {},
 //    test2: () -> Unit = {},
 ) {
@@ -36,6 +37,8 @@ fun HomeShow(
             NavButton(onClick = onCameraClick, buttonText = "打开相机")
             Spacer(modifier = Modifier.height(16.dp))
             NavButton(onClick = onSettingsClick, buttonText = "打开设置")
+            Spacer(modifier = Modifier.height(16.dp))
+            NavButton(onClick = onLogsClick, buttonText = "查看日志")
 //            Spacer(modifier = Modifier.height(16.dp))
 //            NavButton(onClick = test1, buttonText = "功能测试1")
 //            Spacer(modifier = Modifier.height(16.dp))
@@ -48,6 +51,6 @@ fun HomeShow(
 @Composable
 private fun HomeShow() {
     FallenCheckTheme {
-        HomeShow(onCameraClick = {}, onSettingsClick = {})
+        HomeShow(onCameraClick = {}, onSettingsClick = {}, onLogsClick = {})
     }
 }

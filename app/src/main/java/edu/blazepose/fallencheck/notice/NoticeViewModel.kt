@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import edu.blazepose.fallencheck.util.FileUtils
 import kotlinx.coroutines.launch
 import java.util.Timer
 import java.util.TimerTask
@@ -61,11 +62,24 @@ class NoticeViewModel(
                 emailAd?.run {
                     if (this != "") {
                         mail.sendMailSc(this, device, suspectedTimeList)
-                        suspectedTimeList.clear()
+                        cleanSuspectedTime(false)
                     }
                 }
             }
         }
+    }
+
+    private fun cleanSuspectedTime(isFall: Boolean = true) {
+        var log = ""
+        suspectedTimeList.withIndex().forEach { (i, v) ->
+            log += if (isFall && i == suspectedTimeList.lastIndex) {
+                "确定跌倒时间:$v\n"
+            } else {
+                "疑似跌倒时间:$v\n"
+            }
+        }
+        FileUtils.saveLog(alert.getApplication(), log)
+        suspectedTimeList.clear()
     }
 
     init {
@@ -96,7 +110,7 @@ class NoticeViewModel(
                             }
                         }
                         // 警告全部完成后, 清空时间记录
-                        if (isSentE && isSentS) suspectedTimeList.clear()
+                        /*if (isSentE && isSentS)*/ cleanSuspectedTime()
                     } catch (ex: Exception) {
                         Log.e(TAG, "警报流程{ alert::$isPlay - email::$isSentE - sms::$isSentS }")
                         Log.e(TAG, "发出警报异常: ${ex.localizedMessage}", ex)

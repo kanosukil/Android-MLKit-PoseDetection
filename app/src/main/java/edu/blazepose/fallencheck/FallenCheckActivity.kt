@@ -14,6 +14,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import edu.blazepose.fallencheck.ui.layout.HomeShow
 import edu.blazepose.fallencheck.ui.layout.ScreenContainer
+import edu.blazepose.fallencheck.util.FileUtils
 
 /**
  * Main Activity
@@ -36,7 +37,11 @@ class FallenCheckActivity : ComponentActivity() {
                     },
                     onSettingsClick = {
                         startActivity(Intent(applicationContext, SettingsActivity::class.java))
-                    }/*,
+                    },
+                    onLogsClick = {
+                        FileUtils.openLog(applicationContext)
+                    }
+                    /*,
                     test1 = {
                         alertViewModel.play()
                     },
