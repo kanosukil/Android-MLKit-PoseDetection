@@ -70,16 +70,18 @@ class NoticeViewModel(
     }
 
     fun cleanSuspectedTime(isFall: Boolean = true) {
-        var log = ""
-        suspectedTimeList.withIndex().forEach { (i, v) ->
-            log += if (isFall && i == suspectedTimeList.lastIndex) {
-                "确定跌倒时间:$v\n"
-            } else {
-                "疑似跌倒时间:$v\n"
+        if (suspectedTimeList.size > 0) {
+            var log = ""
+            suspectedTimeList.withIndex().forEach { (i, v) ->
+                log += if (isFall && i == suspectedTimeList.lastIndex) {
+                    "确定跌倒时间:$v\n"
+                } else {
+                    "疑似跌倒时间:$v\n"
+                }
             }
+            FileUtils.saveLog(alert.getApplication(), log)
+            suspectedTimeList.clear()
         }
-        FileUtils.saveLog(alert.getApplication(), log)
-        suspectedTimeList.clear()
     }
 
     init {
