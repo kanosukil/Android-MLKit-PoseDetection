@@ -1,5 +1,6 @@
 package edu.blazepose.fallencheck.ui.layout
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,8 +10,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import edu.blazepose.fallencheck.R
 import edu.blazepose.fallencheck.ui.theme.FallenCheckTheme
 
 /**
@@ -34,6 +37,8 @@ fun HomeShow(
             .fillMaxWidth()
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(painter = painterResource(id = R.drawable.main_show), contentDescription = "首页展示图片")
+            Spacer(modifier = Modifier.height(16.dp))
             NavButton(onClick = onCameraClick, buttonText = "打开相机")
             Spacer(modifier = Modifier.height(16.dp))
             NavButton(onClick = onSettingsClick, buttonText = "打开设置")

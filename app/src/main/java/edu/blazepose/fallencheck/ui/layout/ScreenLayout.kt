@@ -27,7 +27,8 @@ fun ScreenContainer(
             topBar = {
                 if (showAppBar) {
                     TopAppBar(
-                        title = { Text(text = "CameraX 跌倒姿态检测") })
+                        title = { Text(text = "跌倒姿态监测APP") },
+                    )
                 }
             },
             content = content
